@@ -1,6 +1,7 @@
 package com.erick.webfluxcourse.controller;
 
-import com.erick.webfluxcourse.entity.User;
+import com.erick.webfluxcourse.model.request.UserRequest;
+import com.erick.webfluxcourse.model.response.UserResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
