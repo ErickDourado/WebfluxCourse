@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 public interface UserController {
 
     @PostMapping
-    ResponseEntity<Mono<UserResponse>> save(@RequestBody UserRequest userRequest);
+    ResponseEntity<Mono<Void>> save(@RequestBody UserRequest userRequest);
 
     @GetMapping("/{id}")
     ResponseEntity<Mono<UserResponse>> findById(@PathVariable String id);
