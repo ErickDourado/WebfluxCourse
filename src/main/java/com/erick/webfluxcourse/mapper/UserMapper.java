@@ -11,7 +11,7 @@ import static org.mapstruct.NullValuePropertyMappingStrategy.IGNORE;
 @Mapper(
         componentModel = "spring",
         nullValuePropertyMappingStrategy = IGNORE,
-        nullValueCheckStrategy = ALWAYS
+        nullValueCheckStrategy = ALWAYS //Esse cara basicamente não seta valor se for null.
 )
 public interface UserMapper {
 
