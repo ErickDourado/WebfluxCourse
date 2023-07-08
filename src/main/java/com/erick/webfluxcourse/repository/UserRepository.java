@@ -16,4 +16,8 @@ public class UserRepository {
         return reactiveMongoTemplate.save(user);
     }
 
+    public Mono<User> findById(final String id) {
+        return reactiveMongoTemplate.findById(id, User.class);
+    }
+
 }

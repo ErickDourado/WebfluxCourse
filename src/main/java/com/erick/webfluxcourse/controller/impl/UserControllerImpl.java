@@ -1,6 +1,7 @@
 package com.erick.webfluxcourse.controller.impl;
 
 import com.erick.webfluxcourse.controller.UserController;
+import com.erick.webfluxcourse.mapper.UserMapper;
 import com.erick.webfluxcourse.model.request.UserRequest;
 import com.erick.webfluxcourse.model.response.UserResponse;
 import com.erick.webfluxcourse.service.UserService;
@@ -18,6 +19,7 @@ import reactor.core.publisher.Mono;
 public class UserControllerImpl implements UserController {
 
     private final UserService userService;
+    private final UserMapper userMapper;
 
     @Override
     public ResponseEntity<Mono<Void>> save(UserRequest userRequest) {
@@ -26,7 +28,9 @@ public class UserControllerImpl implements UserController {
 
     @Override
     public ResponseEntity<Mono<UserResponse>> findById(String id) {
-        return null;
+        return ResponseEntity.ok(
+                userService.findById(id).map(userMapper::toUserResponse)
+        );
     }
 
     @Override
