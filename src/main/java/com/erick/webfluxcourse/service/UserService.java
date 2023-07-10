@@ -38,4 +38,10 @@ public class UserService {
                         new ObjectNotFoundException("No users found!")
                 ));
     }
+
+    public Mono<User> update(final String id, final UserRequest userRequest) {
+        return this.findById(id)
+                .map(user -> userMapper.toEntity(userRequest, user))
+                .flatMap(userRepository::save);
+    }
 }
