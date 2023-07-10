@@ -7,6 +7,7 @@ import com.erick.webfluxcourse.repository.UserRepository;
 import com.erick.webfluxcourse.service.exception.ObjectNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static java.lang.String.format;
@@ -31,4 +32,10 @@ public class UserService {
                 ));
     }
 
+    public Flux<User> findAll() {
+        return userRepository.findAll()
+                .switchIfEmpty(Mono.error(
+                        new ObjectNotFoundException("No users found!")
+                ));
+    }
 }
