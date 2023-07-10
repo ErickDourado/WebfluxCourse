@@ -1,5 +1,6 @@
 package com.erick.webfluxcourse.exception;
 
+import com.erick.webfluxcourse.service.exception.ObjectNotFoundException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -11,6 +12,7 @@ import reactor.core.publisher.Mono;
 
 import static java.time.LocalDateTime.now;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @ControllerAdvice
 public class ControllerExceptionHandler {
@@ -43,6 +45,20 @@ public class ControllerExceptionHandler {
         }
 
         return ResponseEntity.badRequest().body(Mono.just(error));
+    }
+    @ExceptionHandler(ObjectNotFoundException.class)
+    public ResponseEntity<Mono<StandardError>> objectNotFoundException(ObjectNotFoundException e,
+                                                                       ServerHttpRequest request) {
+        return ResponseEntity.status(NOT_FOUND)
+                .body(Mono.just(
+                        StandardError.builder()
+                                .timestamp(now())
+                                .path(request.getPath().toString())
+                                .status(NOT_FOUND.value())
+                                .error(NOT_FOUND.getReasonPhrase())
+                                .message(e.getMessage())
+                                .build()
+                ));
     }
 
     private String verifyDuplicateKey(String message) {
