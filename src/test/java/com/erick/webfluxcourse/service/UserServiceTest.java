@@ -28,21 +28,35 @@ class UserServiceTest {
     private UserService service;
 
     @Test
-    void save() {
+    void testSave() {
         UserRequest userRequest = new UserRequest("Erick Gabriel", "abc@gmail.com", "123");
-        User user = User.builder().build();
+        User userEntity = User.builder().build();
 
-        when(mapper.toEntity(any(UserRequest.class))).thenReturn(user);
-        when(repository.save(any(User.class))).thenReturn(Mono.just(user));
+        when(mapper.toEntity(any(UserRequest.class))).thenReturn(userEntity);
+        when(repository.save(any(User.class))).thenReturn(Mono.just(userEntity));
 
         Mono<User> result = service.save(userRequest);
 
         StepVerifier.create(result)
-                .expectNextMatches(Objects::nonNull)
+                .expectNextMatches(user -> user.getClass().equals(User.class))
                 .expectComplete()
                 .verify();
 
         verify(mapper, times(1)).toEntity(any(UserRequest.class));
         verify(repository, times(1)).save(any(User.class));
+    }
+
+    @Test
+    void testFindById() {
+        when(repository.findById(anyString())).thenReturn(Mono.just(User.builder().build()));
+
+        Mono<User> result = service.findById("123");
+
+        StepVerifier.create(result)
+                .expectNextMatches(user -> user.getClass().equals(User.class))
+                .expectComplete()
+                .verify();
+
+        verify(repository, times(1)).findById(anyString());
     }
 }
