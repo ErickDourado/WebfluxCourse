@@ -73,4 +73,25 @@ class UserServiceTest {
         verify(repository, times(1)).findAll();
     }
 
+    @Test
+    void testUpdate(){
+        UserRequest userRequest = new UserRequest("Erick Gabriel", "abc@gmail.com", "123");
+        User userEntity = User.builder().build();
+
+        when(repository.findById(anyString())).thenReturn(Mono.just(userEntity));
+        when(mapper.toEntity(any(UserRequest.class), any(User.class))).thenReturn(userEntity);
+        when(repository.save(any(User.class))).thenReturn(Mono.just(userEntity));
+
+        Mono<User> result = service.update("123", userRequest);
+
+        StepVerifier.create(result)
+                .expectNextMatches(user -> user.getClass().equals(User.class))
+                .expectComplete()
+                .verify();
+
+        verify(repository, times(1)).findById(anyString());
+        verify(mapper, times(1)).toEntity(any(UserRequest.class), any(User.class));
+        verify(repository, times(1)).save(any(User.class));
+    }
+
 }
