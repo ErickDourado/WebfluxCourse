@@ -4,6 +4,7 @@ import com.erick.webfluxcourse.entity.User;
 import com.erick.webfluxcourse.mapper.UserMapper;
 import com.erick.webfluxcourse.model.request.UserRequest;
 import com.erick.webfluxcourse.repository.UserRepository;
+import com.erick.webfluxcourse.service.exception.ObjectNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -108,6 +109,19 @@ class UserServiceTest {
                 .verify();
 
         verify(repository, times(1)).findAndRemove(anyString());
+    }
+
+    @Test
+    void testHandleNotFound() {
+        when(repository.findById(anyString())).thenReturn(Mono.empty());
+
+        Mono<User> result = service.findById("123");
+
+        StepVerifier.create(result)
+                .expectError(ObjectNotFoundException.class)
+                .verify();
+
+        verify(repository, times(1)).findById(anyString());
     }
 
 }
