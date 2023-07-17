@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -84,7 +85,7 @@ class UserControllerImplTest {
 
     @Test
     @DisplayName("Test endpoint findById with success")
-    void findById() {
+    void testFindByIdWithSuccess() {
         final UserResponse userResponse = new UserResponse(ID, NAME, EMAIL, PASSWORD);
 
         when(service.findById(anyString())).thenReturn(Mono.just(User.builder().build()));
@@ -103,7 +104,22 @@ class UserControllerImplTest {
     }
 
     @Test
-    void findAll() {
+    @DisplayName("Test endpoint findAll with success")
+    void testFindAllWithSuccess() {
+        final UserResponse userResponse = new UserResponse(ID, NAME, EMAIL, PASSWORD);
+
+        when(service.findAll()).thenReturn(Flux.just(User.builder().build()));
+        when(mapper.toUserResponse(any(User.class))).thenReturn(userResponse);
+
+        webTestClient.get().uri("/users")
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.[0].id").isEqualTo(ID)
+                .jsonPath("$.[0].name").isEqualTo(NAME)
+                .jsonPath("$.[0].email").isEqualTo(EMAIL)
+                .jsonPath("$.[0].password").isEqualTo(PASSWORD);
     }
 
     @Test
